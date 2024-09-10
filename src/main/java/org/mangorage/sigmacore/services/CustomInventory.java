@@ -1,4 +1,4 @@
-package org.mangorage.sigmacore;
+package org.mangorage.sigmacore.services;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;

@@ -1,4 +1,4 @@
-package org.mangorage.sigmacore;
+package org.mangorage.sigmacore.services;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +12,6 @@ public class CreeperInventory implements CustomInventory {
 
     private final List<ItemStack> stacks = new ArrayList<>();
 
-
     @Override
     public void add(ItemStack stack) {
         stacks.add(stack);
@@ -23,5 +22,6 @@ public class CreeperInventory implements CustomInventory {
         stacks.forEach(a -> {
             location.getWorld().dropItem(location, a);
         });
+        stacks.clear();
     }
 }
