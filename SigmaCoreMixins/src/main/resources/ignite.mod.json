@@ -1,0 +1,7 @@
+{
+  "id": "SigmaCoreMixins",
+  "version": "1.0.0",
+  "mixins": [
+    "mixins.sigmacore.core.json"
+  ]
+}

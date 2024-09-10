@@ -1,0 +1,4 @@
+name: SigmaCore
+version: '${version}'
+main: org.mangorage.sigmacore.SigmaCore
+api-version: '1.21'
