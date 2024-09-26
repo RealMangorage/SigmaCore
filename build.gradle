@@ -1,7 +1,6 @@
 plugins {
     id 'java'
     id 'io.papermc.paperweight.userdev' version '1.7.2' // Check for the latest version
-    id("xyz.jpenilla.run-paper") version "2.3.0" // Adds runServer and runMojangMappedServer tasks for testing
 }
 
 group = 'org.mangorage'
@@ -60,3 +59,42 @@ processResources {
         expand props
     }
 }
+
+
+// Copy the subproject jar after it has been built
+task copySigmaMixinsJarForBuild(type: Copy) {
+    // This block will only be executed once the task is called, ensuring the subproject jar is built
+    from { project(':SigmaCoreMixins').tasks.jar.archiveFile }
+    into "$buildDir/resources/main/mixinjar"
+}
+
+// Task to copy the JAR file to a specific location
+task copyJar(type: Copy) {
+    dependsOn(build)
+    mustRunAfter(build)
+
+    from("${buildDir}/libs/SigmaCore-1.0.0.jar")
+    into("run/plugins")
+
+    rename { String filename ->
+        "plugin.jar"
+    }
+}
+
+task runJar(type: JavaExec) {
+    // Specify the path to your JAR file
+
+    group "server"
+
+    dependsOn(copyJar)
+    mustRunAfter(copyJar)
+    main = '-jar'
+    args = [file('run/boot.jar').absolutePath]
+    workingDir = file("run")
+}
+
+// Ensure the copySubprojectJar task runs after the subproject jar task is completed
+copySigmaMixinsJarForBuild.dependsOn(':SigmaCoreMixins:jar')
+
+// Ensure the resources task depends on the copying of the subproject jar
+processResources.dependsOn(copySigmaMixinsJarForBuild)

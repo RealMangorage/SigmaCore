@@ -1,7 +1,6 @@
 plugins {
     id 'java'
     id 'io.papermc.paperweight.userdev' version '1.7.2' // Check for the latest version
-    id("xyz.jpenilla.run-paper") version "2.3.0" // Adds runServer and runMojangMappedServer tasks for testing
 }
 
 group = 'org.mangorage'
@@ -32,6 +31,7 @@ dependencies {
 }
 
 def targetJavaVersion = 21
+
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
@@ -47,4 +47,9 @@ tasks.withType(JavaCompile).configureEach {
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         options.release.set(targetJavaVersion)
     }
+}
+
+task customJar(type: Jar) {
+    archiveClassifier.set('mixins')
+    from sourceSets.main.output
 }
