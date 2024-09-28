@@ -70,8 +70,16 @@ task copySigmaMixinsJarForBuild(type: Copy) {
 
 // Task to copy the JAR file to a specific location
 task copyJar(type: Copy) {
-    dependsOn(build)
-    mustRunAfter(build)
+    dependsOn(reobfJar)
+    mustRunAfter(reobfJar)
+
+    def destinationFile = file('run/plugins/plugin.jar')
+
+    doFirst {
+        if (destinationFile.exists()) {
+            destinationFile.delete()
+        }
+    }
 
     from("${buildDir}/libs/SigmaCore-1.0.0.jar")
     into("run/plugins")
