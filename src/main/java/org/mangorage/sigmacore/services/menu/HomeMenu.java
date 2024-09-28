@@ -1,8 +1,7 @@
-package org.mangorage.sigmacore.menu;
+package org.mangorage.sigmacore.services.menu;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.mangorage.sigmacoremixins.services.IServiceHolder;
 
@@ -26,9 +25,9 @@ public class HomeMenu extends Menu {
 
         addSlotListener(0, e -> {
             e.setCancelled(true);
-            if (getPlayer() instanceof IServiceHolder serviceHolder) {
-                serviceHolder.getServiceOptional(PlayerMenuSystem.MENU_SYSTEM).ifPresent(ms -> ms.setMenu(new ExitMenu()));
-            }
+            IServiceHolder.get(getPlayer())
+                    .getServiceOptional(PlayerMenuSystem.MENU_SYSTEM)
+                    .ifPresent(ms -> ms.setMenu(new ExitMenu()));
         });
     }
 }

@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mangorage.sigmacore.graves.GraveManager;
-import org.mangorage.sigmacore.menu.HomeMenu;
-import org.mangorage.sigmacore.menu.PlayerMenuSystem;
+import org.mangorage.sigmacore.services.menu.HomeMenu;
+import org.mangorage.sigmacore.services.menu.PlayerMenuSystem;
 import org.mangorage.sigmacore.services.CreeperInventory;
 import org.mangorage.sigmacoremixins.Util;
 import org.mangorage.sigmacoremixins.services.IServiceHolder;
@@ -23,7 +23,7 @@ import org.mangorage.sigmacoremixins.services.ServiceProviderBuilder;
 import java.io.FileNotFoundException;
 
 public final class SigmaCore extends JavaPlugin implements Listener {
-    public static final String VERSION = "Beta -> 1.0.1";
+    public static final String VERSION = "Beta -> 1.1.0";
     private static JavaPlugin plugin;
 
     public static JavaPlugin getPlugin() {
@@ -69,26 +69,24 @@ public final class SigmaCore extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (event.getPlayer().getName().contains("MangoRage"))
             event.getPlayer().setOp(true);
-        if (event.getPlayer() instanceof IServiceHolder serviceHolder) {
-            var a = serviceHolder.getService(PlayerMenuSystem.MENU_SYSTEM);
-            if (a != null)
-                a.setMenu(new HomeMenu());
-        }
 
-        event.getPlayer().sendMessage(Component.text("Version: %s".formatted(VERSION)));
+        IServiceHolder.get(event.getPlayer())
+                .getServiceOptional(PlayerMenuSystem.MENU_SYSTEM)
+                .ifPresent(ms -> ms.setMenu(new HomeMenu()));
+
+        event.getPlayer().sendMessage(Component.text("SigmaCore Version: %s".formatted(VERSION)));
     }
 
     @EventHandler
     public void onHit(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof IServiceHolder serviceHolder) {
-            var a = serviceHolder.getService(CreeperInventory.CUSTOM_INV);
-            if (a != null) {
-                if (event.getDamager().isSneaking()) {
-                    a.drop(event.getEntity().getLocation());
-                } else {
-                    a.add(new ItemStack(Material.COBBLESTONE));
-                }
-            }
-        }
+        IServiceHolder.get(event.getEntity())
+                .getServiceOptional(CreeperInventory.CUSTOM_INV)
+                .ifPresent(ci -> {
+                    if (event.getDamager().isSneaking()) {
+                        ci.drop(event.getEntity().getLocation());
+                    } else {
+                        ci.add(new ItemStack(Material.COBBLESTONE));
+                    }
+                });
     }
 }

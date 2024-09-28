@@ -1,4 +1,4 @@
-package org.mangorage.sigmacore.menu;
+package org.mangorage.sigmacore.services.menu;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

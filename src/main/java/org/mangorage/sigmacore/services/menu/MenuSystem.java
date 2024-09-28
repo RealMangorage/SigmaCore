@@ -1,7 +1,6 @@
-package org.mangorage.sigmacore.menu;
+package org.mangorage.sigmacore.services.menu;
 
 import org.bukkit.event.Event;
-import org.bukkit.event.inventory.InventoryEvent;
 
 public interface MenuSystem {
     void setMenu(Menu menu);

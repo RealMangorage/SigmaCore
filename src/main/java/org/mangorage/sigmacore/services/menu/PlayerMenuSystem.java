@@ -1,4 +1,4 @@
-package org.mangorage.sigmacore.menu;
+package org.mangorage.sigmacore.services.menu;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
