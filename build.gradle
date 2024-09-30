@@ -32,6 +32,7 @@ dependencies {
     paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
 
     implementation project(":SigmaCoreMixins")
+    mixinJar(project(":SigmaCoreMixins"))
 
     boot(project(":ServerBoot"))
     ignite('libs:ignite')
@@ -72,16 +73,3 @@ processResources {
         expand props
     }
 }
-
-// Copy the subproject jar after it has been built
-task copySigmaMixinsJarForBuild(type: Copy) {
-    // This block will only be executed once the task is called, ensuring the subproject jar is built
-    from { project(':SigmaCoreMixins').tasks.jar.archiveFile }
-    into "$buildDir/resources/main/mixinjar"
-}
-
-// Ensure the copySubprojectJar task runs after the subproject jar task is completed
-copySigmaMixinsJarForBuild.dependsOn(':SigmaCoreMixins:jar')
-
-// Ensure the resources task depends on the copying of the subproject jar
-processResources.dependsOn(copySigmaMixinsJarForBuild)
