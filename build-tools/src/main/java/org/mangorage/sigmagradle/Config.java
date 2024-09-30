@@ -3,19 +3,23 @@ package org.mangorage.sigmagradle;
 public class Config {
     private final SigmaGradle plugin;
     private String serverName;
-    private String serverPath;
+    private String mcVersion;
+    private String build;
 
     public Config(SigmaGradle plugin) {
         this.plugin = plugin;
     }
 
-    public void setServer(String path, String name) {
-        this.serverPath = path;
+    public void setServer(String name) {
         this.serverName = name;
     }
 
-    public String getServerPath() {
-        return serverPath;
+    public void setMCVersion(String version) {
+        this.mcVersion = version;
+    }
+
+    public String getMCVersion() {
+        return mcVersion;
     }
 
     public String getServerName() {

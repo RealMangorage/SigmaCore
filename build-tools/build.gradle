@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'java-gradle-plugin'
+    id 'com.github.johnrengelman.shadow' version '7.1.2' // Replace with the desired version
 }
 
 group = 'org.mangorage'
@@ -10,8 +11,15 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    shadow
+}
+
 dependencies {
-    implementation gradleApi()
+    compileOnly gradleApi()
+    compileOnly 'com.google.code.gson:gson:2.10.1' // Replace with the desired Gson version
+    shadow 'com.google.code.gson:gson:2.10.1'
+
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -27,5 +35,22 @@ gradlePlugin {
             id = 'org.mangorage.build-tools'
             implementationClass = 'org.mangorage.sigmagradle.SigmaGradle'
         }
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+}
+
+jar {
+    dependsOn configurations.shadow
+
+    from {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        configurations.shadow.collect {
+            zipTree(it)
+        }
+    } {
+        exclude "META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA"
     }
 }

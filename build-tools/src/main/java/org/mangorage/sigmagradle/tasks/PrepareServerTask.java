@@ -4,12 +4,10 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import org.mangorage.sigmagradle.Config;
 import org.mangorage.sigmagradle.core.Util;
+import org.mangorage.sigmagradle.core.paper.Versions;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 public class PrepareServerTask extends DefaultTask {
@@ -21,23 +19,27 @@ public class PrepareServerTask extends DefaultTask {
         this.config = config;
     }
 
-    private File getServerFile(Path root) {
-        return root.resolve(config.getServerPath()).toFile();
-    }
-
     @TaskAction
     public void run() {
 
         var dir = getProject().getProjectDir().toPath();
-        var run = dir.resolve("run");
-        var plugins = run.resolve("plugins");
-
-        var plugin = getProject().getTasks().getByName("jar").getOutputs().getFiles().getSingleFile();
-        var boot = getProject().getConfigurations().getByName("boot").getSingleFile();
-        var ignite = getProject().getConfigurations().getByName("ignite").getSingleFile();
-        var server = getServerFile(run);
-
         try {
+                var run = dir.resolve("run");
+                var cache = run.resolve("build-cache");
+                if (!Files.exists(cache))
+                    Files.createDirectories(cache);
+                var plugins = run.resolve("plugins");
+
+            var plugin = getProject().getTasks().getByName("jar").getOutputs().getFiles().getSingleFile();
+            var boot = getProject().getConfigurations().getByName("boot").getSingleFile();
+            var ignite = getProject().getConfigurations().getByName("ignite").getSingleFile();
+
+            var versions = Versions.getForMinecraftVersion(config.getMCVersion());
+            var latest = versions.builds().getLast();
+            var server = cache.resolve("paper-%s-%s.jar".formatted(config.getMCVersion(), latest));
+
+            Versions.downloadTo(server, "paper", config.getMCVersion(), "" + latest);
+
             Files.copy(
                     plugin.toPath(),
                     plugins.resolve("plugin.jar"),
@@ -49,7 +51,7 @@ public class PrepareServerTask extends DefaultTask {
                     StandardCopyOption.REPLACE_EXISTING
             );
             Files.copy(
-                    server.toPath(),
+                    server,
                     run.resolve(config.getServerName() + ".jar"),
                     StandardCopyOption.REPLACE_EXISTING
             );
@@ -66,10 +68,8 @@ public class PrepareServerTask extends DefaultTask {
                     return old.replaceFirst("false", "true");
                 });
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

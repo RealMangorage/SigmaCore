@@ -1,9 +1,15 @@
 package org.mangorage.sigmagradle.core;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Scanner;
 import java.util.function.Function;
@@ -34,6 +40,27 @@ public class Util {
         directory.delete(); // Delete the empty directory
     }
 
+    public static String downloadRawData(String url) throws IOException {
+        URL websiteUrl = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) websiteUrl.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setReadTimeout(5000);
+        // 5 seconds timeout
+
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                StringBuilder content = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line).append("\n");
+                }
+                return content.toString();
+            }
+        } else {
+            throw new IOException("Error downloading data from " + url + ": HTTP status code " + responseCode);
+        }
+    }
 
     public static void editFile(Path filePath, Function<String, String> editor) {
         try {
