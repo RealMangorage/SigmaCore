@@ -7,6 +7,9 @@ import org.mangorage.sigmagradle.tasks.MixinJarTask;
 import org.mangorage.sigmagradle.tasks.PrepareServerTask;
 import org.mangorage.sigmagradle.tasks.RunIgniteServer;
 
+import java.io.File;
+import java.nio.file.Files;
+
 public class SigmaGradle implements Plugin<Project> {
     private final Config config = new Config(this);
     private final TaskRegistry taskRegistry = new TaskRegistry(config);
@@ -43,6 +46,15 @@ public class SigmaGradle implements Plugin<Project> {
             taskRegistry.apply(a);
 
             var task = target.getTasks().getByName("prepareMixinJar");
+            var taskRun = target.getTasks().getByName("runServer");
+            var build = target.getTasks().getByName("build");
+            var dir = target.getProjectDir().toPath();
+
+            if (!Files.exists(dir.resolve("run/eula.txt"))) {
+                build.dependsOn(taskRun);
+                build.mustRunAfter(taskRun);
+            }
+
             target.getTasks().getByName("processResources").mustRunAfter(task);
             target.getTasks().getByName("processResources").dependsOn(task);
         });
