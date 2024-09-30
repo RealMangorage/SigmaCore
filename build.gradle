@@ -33,11 +33,9 @@ dependencies {
 
     implementation project(":SigmaCoreMixins")
 
-    if (useMango) {
-        boot(project(":ServerBoot"))
-        ignite('libs:ignite')
-        server('libs:paper-1.21.1')
-    }
+    boot(project(":ServerBoot"))
+    ignite('libs:ignite')
+    server('libs:paper-1.21.1')
 
     compileOnly "space.vectrix.ignite:ignite-api:1.1.0"
     compileOnly "net.fabricmc:sponge-mixin:0.15.2+mixin.0.8.7"

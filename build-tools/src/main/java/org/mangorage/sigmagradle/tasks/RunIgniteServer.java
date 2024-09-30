@@ -12,7 +12,7 @@ public class RunIgniteServer extends JavaExec {
     public RunIgniteServer(Config config) {
         setDependsOn(getProject().getTasksByName("PrepareServerTask", false));
         setMustRunAfter(getProject().getTasksByName("PrepareServerTask", false));
-
+        setGroup("sigmagradleruns");
         Path dir = getProject().getProjectDir().toPath();
         Path run = dir.resolve("run");
         Path boot = run.resolve("boot.jar");
