@@ -24,11 +24,15 @@ public class PrepareServerTask extends DefaultTask {
 
         var dir = getProject().getProjectDir().toPath();
         try {
-                var run = dir.resolve("run");
-                var cache = run.resolve("build-cache");
-                if (!Files.exists(cache))
-                    Files.createDirectories(cache);
-                var plugins = run.resolve("plugins");
+            var run = dir.resolve("run");
+            if (!Files.exists(run))
+                Files.createDirectories(run);
+            var cache = run.resolve("build-cache");
+            if (!Files.exists(cache))
+                Files.createDirectories(cache);
+            var plugins = run.resolve("plugins");
+            if (!Files.exists(plugins))
+                Files.createDirectories(plugins);
 
             var plugin = getProject().getTasks().getByName("jar").getOutputs().getFiles().getSingleFile();
             var boot = getProject().getConfigurations().getByName("boot").getSingleFile();
@@ -63,10 +67,12 @@ public class PrepareServerTask extends DefaultTask {
 
 
             var eula = run.resolve("eula.txt");
-            if (Files.exists(eula)) {
-                Util.editFile(eula, old -> {
-                    return old.replaceFirst("false", "true");
-                });
+            if (!Files.exists(eula)) {
+                Files.write(eula, """
+                        #By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).
+                        #Mon Sep 30 06:06:33 PDT 2024
+                        eula=true
+                        """.getBytes());
             }
         } catch (Exception e) {
             e.printStackTrace();
