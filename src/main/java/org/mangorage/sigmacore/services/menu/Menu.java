@@ -1,5 +1,7 @@
 package org.mangorage.sigmacore.services.menu;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -7,13 +9,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class Menu {
-    private final Map<Integer, Consumer<InventoryClickEvent>> slots = new HashMap<>();
+    private final Int2ObjectMap<Consumer<InventoryClickEvent>> slots = new Int2ObjectOpenHashMap<>();
     private final Inventory inventory;
     private Player player = null;
 
@@ -51,6 +51,7 @@ public abstract class Menu {
 
     protected void onEvent(Event event) {
         if (event instanceof InventoryClickEvent event1) {
+            if (event1.getClickedInventory() != inventory) return;
             var m = slots.get(event1.getSlot());
             if (m != null) m.accept(event1);
         }

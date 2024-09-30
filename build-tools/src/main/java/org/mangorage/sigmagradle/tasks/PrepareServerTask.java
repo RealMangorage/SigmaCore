@@ -7,6 +7,7 @@ import org.mangorage.sigmagradle.core.Util;
 import org.mangorage.sigmagradle.core.paper.Versions;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
@@ -21,7 +22,6 @@ public class PrepareServerTask extends DefaultTask {
 
     @TaskAction
     public void run() {
-
         var dir = getProject().getProjectDir().toPath();
         try {
             var run = dir.resolve("run");
@@ -74,8 +74,8 @@ public class PrepareServerTask extends DefaultTask {
                         eula=true
                         """.getBytes());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
