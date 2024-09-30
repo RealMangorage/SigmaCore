@@ -10,8 +10,8 @@ import java.util.List;
 public class RunIgniteServer extends JavaExec {
     @Inject
     public RunIgniteServer(Config config) {
-        setDependsOn(getProject().getTasksByName("PrepareServerTask", false));
-        setMustRunAfter(getProject().getTasksByName("PrepareServerTask", false));
+        setDependsOn(getProject().getTasksByName("prepareServer", false));
+        setMustRunAfter(getProject().getTasksByName("prepareServer", false));
         setGroup("sigmagradleruns");
         Path dir = getProject().getProjectDir().toPath();
         Path run = dir.resolve("run");

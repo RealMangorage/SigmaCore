@@ -34,11 +34,6 @@ public class SigmaGradle implements Plugin<Project> {
             t.setTransitive(false);
         });
 
-        target.getConfigurations().create("server", t -> {
-            t.setVisible(true);
-            t.setTransitive(false);
-        });
-
         target.getConfigurations().create("mixinJar", t -> {
             t.setVisible(true);
             t.setTransitive(false);
