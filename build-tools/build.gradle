@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'java-gradle-plugin'
+}
+
+group = 'org.mangorage'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+gradlePlugin {
+    plugins {
+        myPlugin {
+            id = 'org.mangorage.build-tools'
+            implementationClass = 'org.mangorage.sigmagradle.SigmaGradle'
+        }
+    }
+}

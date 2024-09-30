@@ -1,12 +1,14 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        mavenLocal()
         maven {
            url= "https://repo.papermc.io/repository/maven-public/"
         }
+        maven { url 'https://repo.spongepowered.org/maven' }
     }
 }
 rootProject.name = 'SigmaCore'
 include 'SigmaCoreMixins'
 include 'ServerBoot'
-
+includeBuild 'build-tools'

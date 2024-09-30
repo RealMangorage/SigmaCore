@@ -19,11 +19,14 @@ repositories {
     maven {
         url = "https://maven.fabricmc.net/"
     }
+    maven { url 'https://repo.spongepowered.org/maven' }
 }
 
 dependencies {
     remapper("net.fabricmc:tiny-remapper:0.10.1:fat")
     paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
+
+    //annotationProcessor 'org.spongepowered:mixin:0.8.7' // Ensure this matches the Mixin version you use
 
     compileOnly "space.vectrix.ignite:ignite-api:1.1.0"
     compileOnly "net.fabricmc:sponge-mixin:0.15.2+mixin.0.8.7"
@@ -53,3 +56,4 @@ task customJar(type: Jar) {
     archiveClassifier.set('mixins')
     from sourceSets.main.output
 }
+

@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'io.papermc.paperweight.userdev' version '1.7.2' // Check for the latest version
+    id "xyz.jpenilla.run-paper" version '2.3.1'
+    id 'org.mangorage.build-tools' version '+'
 }
 
 group = 'org.mangorage'
@@ -19,6 +21,10 @@ repositories {
     maven {
         url = "https://maven.fabricmc.net/"
     }
+    flatDir {
+        dirs 'libs'
+        dirs 'run/versions/1.21.1'
+    }
 }
 
 dependencies {
@@ -27,10 +33,19 @@ dependencies {
 
     implementation project(":SigmaCoreMixins")
 
+    if (useMango) {
+        boot(project(":ServerBoot"))
+        ignite('libs:ignite')
+        server('libs:paper-1.21.1')
+    }
 
     compileOnly "space.vectrix.ignite:ignite-api:1.1.0"
     compileOnly "net.fabricmc:sponge-mixin:0.15.2+mixin.0.8.7"
     compileOnly "io.github.llamalad7:mixinextras-common:0.4.1"
+}
+
+SigmaGradle {
+    setServer("server")
 }
 
 def targetJavaVersion = 21
@@ -60,45 +75,11 @@ processResources {
     }
 }
 
-
 // Copy the subproject jar after it has been built
 task copySigmaMixinsJarForBuild(type: Copy) {
     // This block will only be executed once the task is called, ensuring the subproject jar is built
     from { project(':SigmaCoreMixins').tasks.jar.archiveFile }
     into "$buildDir/resources/main/mixinjar"
-}
-
-// Task to copy the JAR file to a specific location
-task copyJar(type: Copy) {
-    dependsOn(reobfJar)
-    mustRunAfter(reobfJar)
-
-    def destinationFile = file('run/plugins/plugin.jar')
-
-    doFirst {
-        if (destinationFile.exists()) {
-            destinationFile.delete()
-        }
-    }
-
-    from("${buildDir}/libs/SigmaCore-1.0.0.jar")
-    into("run/plugins")
-
-    rename { String filename ->
-        "plugin.jar"
-    }
-}
-
-task runJar(type: JavaExec) {
-    // Specify the path to your JAR file
-
-    group "server"
-
-    dependsOn(copyJar)
-    mustRunAfter(copyJar)
-    main = '-jar'
-    args = [file('run/boot.jar').absolutePath]
-    workingDir = file("run")
 }
 
 // Ensure the copySubprojectJar task runs after the subproject jar task is completed
