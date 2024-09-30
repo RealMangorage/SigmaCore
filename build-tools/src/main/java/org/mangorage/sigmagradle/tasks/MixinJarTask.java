@@ -24,7 +24,7 @@ public class MixinJarTask extends DefaultTask {
 
         try {
             if (Files.exists(mixinJar)) {
-                Files.delete(mixinJar);
+                Util.deleteDirectory(mixinJar);
             }
             if (!mixins.isEmpty())
                 Files.createDirectories(mixinJar);
