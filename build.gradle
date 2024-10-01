@@ -33,7 +33,6 @@ dependencies {
     implementation project(":SigmaCoreMixins")
     mixinJar(project(":SigmaCoreMixins"))
 
-    boot(project(":ServerBoot"))
     ignite('libs:ignite')
 
     compileOnly "space.vectrix.ignite:ignite-api:1.1.0"

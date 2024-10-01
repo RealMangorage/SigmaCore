@@ -24,11 +24,6 @@ public class SigmaGradle implements Plugin<Project> {
     public void apply(Project target) {
         target.getExtensions().add("SigmaGradle", config);
 
-        target.getConfigurations().create("boot", t -> {
-            t.setVisible(true);
-            t.setTransitive(false);
-        });
-
         target.getConfigurations().create("ignite", t -> {
             t.setVisible(true);
             t.setTransitive(false);

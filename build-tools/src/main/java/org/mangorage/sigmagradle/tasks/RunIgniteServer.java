@@ -13,7 +13,7 @@ public class RunIgniteServer extends JavaExec {
     public RunIgniteServer(Config config) {
         Path dir = getProject().getProjectDir().toPath();
         Path run = dir.resolve("run");
-        Path boot = run.resolve("boot.jar");
+        Path ignite = run.resolve("ignite.jar");
 
         setDependsOn(getProject().getTasksByName("prepareServer", false));
         setMustRunAfter(getProject().getTasksByName("prepareServer", false));
@@ -24,7 +24,7 @@ public class RunIgniteServer extends JavaExec {
         setWorkingDir(run);
         setMain("-jar");
         setArgs(List.of(
-                boot.toAbsolutePath().toString()
+                ignite.toAbsolutePath().toString()
         ));
     }
 }

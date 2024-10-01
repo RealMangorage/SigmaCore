@@ -35,7 +35,6 @@ public class PrepareServerTask extends DefaultTask {
                 Files.createDirectories(plugins);
 
             var plugin = getProject().getTasks().getByName("jar").getOutputs().getFiles().getSingleFile();
-            var boot = getProject().getConfigurations().getByName("boot").getSingleFile();
             var ignite = getProject().getConfigurations().getByName("ignite").getSingleFile();
 
             var versions = Versions.getForMinecraftVersion(config.getMCVersion());
@@ -59,12 +58,6 @@ public class PrepareServerTask extends DefaultTask {
                     run.resolve(config.getServerName() + ".jar"),
                     StandardCopyOption.REPLACE_EXISTING
             );
-            Files.copy(
-                    boot.toPath(),
-                    run.resolve("boot.jar"),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
 
             var eula = run.resolve("eula.txt");
             if (!Files.exists(eula)) {
